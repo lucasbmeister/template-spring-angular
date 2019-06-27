@@ -10,7 +10,7 @@ import java.util.List;
 
 @Repository
 @Transactional
-public interface IRoleRepository extends IBaseRepository<Role> {//IBaseRepository<Role>
+public interface IRoleRepository extends IBaseRepository<Role> {
     Role findByRoleAndUser(String role, User user);
     List<Role> findByUser(User user);
 }
