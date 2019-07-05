@@ -15,13 +15,13 @@ public class RolesService extends BaseCrudService<Role> {
 	@Autowired
     IRoleRepository rolesRepository;
 
-    public Role findByRoleAndUser(String role, User user) {
-    	return rolesRepository.findByRoleAndUser(role, user);
-    }
-
-    public List<Role> findByUser(User user) {
-		return rolesRepository.findByUser(user);
-	}
+//    public Role findByRoleAndUser(String role, User user) {
+//    	return rolesRepository.findByRoleAndUser(role, user);
+//    }
+//
+//    public List<Role> findByUser(User user) {
+//		return rolesRepository.findByUser(user);
+//	}
 
 //    public void delete(Long role) {
 //    	Role roleToDelete = rolesRepository.getOne(role);

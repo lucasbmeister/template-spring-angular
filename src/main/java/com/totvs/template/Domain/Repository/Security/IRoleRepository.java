@@ -11,6 +11,6 @@ import java.util.List;
 @Repository
 @Transactional
 public interface IRoleRepository extends IBaseRepository<Role> {
-    Role findByRoleAndUser(String role, User user);
-    List<Role> findByUser(User user);
+    //Role findByRoleAndUser(String role, User user);
+    //List<Role> findByUser(User users);
 }

@@ -2,21 +2,19 @@ package com.totvs.template.Domain.Dto.Security.Users;
 
 import com.totvs.template.Domain.Dto.Base.EntityBaseDto;
 import com.totvs.template.Domain.Dto.Security.Roles.RoleDto;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
+import java.util.HashSet;
+import java.util.Set;
 
 public class UserDto extends EntityBaseDto {
 	
 	// Attributes
-	private String username;
-    private String password;
-    private String token;
-    private List<String> roles = new ArrayList<>();
-    private String mail;
-    private String name;
-    private String surname;
+	public String username;
+	public String password;
+	public String token;
+	public String mail;
+	public String name;
+	public String surname;
+	public Set<RoleDto> roles = new HashSet<>();
 
 	
 	public String getToken() {
@@ -49,13 +47,13 @@ public class UserDto extends EntityBaseDto {
 	public void setPassword(String password) {
 		this.password = password;
 	}
-	public List<String> getRoles() {
+	public Set<RoleDto> getRoles() {
 		return roles;
 	}
 
 
-	public void setRoles(List<RoleDto> roles) {
-		this.roles = roles.stream().map(el -> el.getRole()).collect(Collectors.toList());
+	public void setRoles(Set<RoleDto> roles) {
+		this.roles = roles;
 	}
 	public String getSurname() {
 		return surname;

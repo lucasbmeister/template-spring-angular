@@ -2,6 +2,7 @@ package com.totvs.template.Services.Security;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import com.totvs.template.Domain.Entities.Security.Role;
 import com.totvs.template.Domain.Entities.Security.User;
@@ -23,14 +24,22 @@ public class UserService extends BaseCrudService<User> {
 	IRoleRepository rolesRepository;
 	private static RolesService rolesService = new RolesService();
 
+	public boolean isFirstStart(){
+		return this.userRepository.count() == 0 ? true : false;
+	}
+
 	public User login(String username, String password) {
 		if (userRepository.count() == 0) {
 			User newUser = new User();
 			newUser.setUsername("admin");
-			newUser.addRoles(new Role("ADMIN", newUser));
-			newUser.setPassword("62f264d7ad826f02a8af714c0a54b197935b717656b80461686d450f7b3abde4c553541515de2052b9af70f710f0cd8a1a2d3f4d60aa72608d71a63a9a93c0f5");
-			rolesRepository.save(newUser.getRoles().get(0));
+			newUser.setName("Administrador");
+			newUser.setMail("admin@fsw.com.br");
+			newUser.addRoles(new Role("ADMIN"));
+			newUser.setPassword("0510c3a26ff918756d5fffb87df4820211a45f294b06732ec339665d09def878d6d963673547166d575393001a96c692a855c309ed1cfb39b1f2088965fd9fd1");
+			//rolesRepository.save(newUser.getRoles().get(0));
 			userRepository.save(newUser);
+		} else {
+
 		}
 		return userRepository.findByUsernameAndPassword(username, password);
 	}
@@ -50,8 +59,8 @@ public class UserService extends BaseCrudService<User> {
 
 	//CRUD - GET ONE
     	
-	public User getOne(Long id) {
-		return userRepository.getOne(id);
+	public Optional<User> findOne(Long id) {
+		return userRepository.findById(id);
 	}
 
     	

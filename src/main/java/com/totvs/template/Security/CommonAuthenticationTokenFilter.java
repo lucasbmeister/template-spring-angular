@@ -58,7 +58,7 @@ public class CommonAuthenticationTokenFilter extends OncePerRequestFilter {
     	ObjectMapper objectMapper = new ObjectMapper();
     	JsonNode root = objectMapper.readTree(jsonUserDetails);
     	
-    	long userId = root.get("Id").asLong();
+    	long userId = root.get("id").asLong();
     	String username = root.get("username").asText();
 
     	

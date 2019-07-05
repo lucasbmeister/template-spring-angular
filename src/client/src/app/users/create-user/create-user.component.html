@@ -1,0 +1,64 @@
+<thf-page-edit t-title="Adicionar Usuário" [t-disable-submit]="formCreateUser.invalid">
+	<form #formCreateUser="ngForm">
+		<thf-tabs>
+			<thf-tab t-active t-label="Geral">
+				<div class="thf-row">
+
+					<thf-email class="thf-md-4" name="email" [(ngModel)]="user.email" t-clean t-label="Email"
+						t-required>
+					</thf-email>
+
+					<thf-input class="thf-md-4" name="username" [(ngModel)]="user.username" t-clean t-label="Usuário"
+						t-required>
+					</thf-input>
+
+					<thf-input class="thf-md-4" name="name" [(ngModel)]="user.name" t-clean t-label="Nome" t-required>
+					</thf-input>
+
+					<thf-input class="thf-md-4" name="surname" [(ngModel)]="user.surname" t-clean t-label="Sobrenome"
+						t-required>
+					</thf-input>
+				</div>
+				<div class="thf-row">
+					<div class="thf-md-4">
+						<thf-password #password="ngModel" validateEqual="confirmPassword" reverse="true" name="password"
+							[(ngModel)]="user.password" t-label="Senha" t-maxlength="14" t-minlength="9" t-clean
+							t-required>
+						</thf-password>
+						<div *ngIf="password.invalid" class="invalid-feedback">
+							<div *ngIf="password.errors.required">Obrigatório</div>
+							<div *ngIf="password.errors.minlength">Senha deve possuir no minímo 9 caracteres</div>
+						</div>
+					</div>
+					<div class="thf-md-4">
+						<thf-password #confirmPassword="ngModel" ngModel validateEqual="password" reverse="false"
+							name="confirmPassword" t-label="Confirmar Senha" t-maxlength="14" t-clean t-required>
+						</thf-password>
+						<div *ngIf="confirmPassword.invalid" class="invalid-feedback">
+							<div *ngIf="confirmPassword.errors.required">Obrigatório</div>
+							<div *ngIf="confirmPassword.errors.validateEqual && !confirmPassword.errors.required">Senhas
+								não coincidem</div>
+						</div>
+					</div>
+				</div>
+			</thf-tab>
+			<thf-tab t-label="Permissões">
+				<div class="thf-row">
+					<thf-combo [(ngModel)]="currentRoleId" class="thf-md-4" name="roles" t-label="Permissões"
+						[t-filter-params]="role" [t-filter-service]="roleService" t-required="false">
+					</thf-combo>
+					<thf-button class="thf-md-2 no-label-padding" t-label="Adicionar" t-type="default"
+						(t-click)="addRoleToTable()">
+					</thf-button>
+				</div>
+				<div class="thf-row">
+					<div class="thf-md-12">
+						<thf-table t-sort="true" [t-actions]="roleActions" t-striped="true" [t-columns]="roleColumns"
+							[t-items]="user.roles">
+						</thf-table>
+					</div>
+				</div>
+			</thf-tab>
+		</thf-tabs>
+	</form>
+</thf-page-edit>

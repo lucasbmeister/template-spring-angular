@@ -73,7 +73,7 @@ public class SwaggerConfiguration {
 
 		User user = new User();
 		user.setUsername("admin");
-		user.setPassword("62f264d7ad826f02a8af714c0a54b197935b717656b80461686d450f7b3abde4c553541515de2052b9af70f710f0cd8a1a2d3f4d60aa72608d71a63a9a93c0f5");
+		user.setPassword("teste123");
 
 		Algorithm algorithm;
 		Gson gson = new Gson();

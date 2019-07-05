@@ -1,6 +1,7 @@
 package com.totvs.template.Domain.Entities.Base;
 
 import lombok.Getter;
+import lombok.Setter;
 
 import javax.persistence.*;
 
@@ -9,7 +10,7 @@ public class EntityBase implements IEntityBase {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Getter
-    private long Id;
+    @Getter @Setter
+    private long id;
 
 }

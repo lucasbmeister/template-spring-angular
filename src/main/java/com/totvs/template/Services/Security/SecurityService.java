@@ -59,7 +59,7 @@ public class SecurityService {
 		User user = null;
 		try {
 			//decode token
-			Algorithm algorithm = Algorithm.HMAC256("secret");
+			Algorithm algorithm = Algorithm.HMAC256(secret);
 			JWTVerifier verifier = JWT.require(algorithm).build();
 			DecodedJWT jwt = verifier.verify((String)token);
 			String userJSON = jwt.getClaims().get("user").asString();
@@ -81,7 +81,7 @@ public class SecurityService {
 		User user = null;
 		try {
 			//decode token
-			Algorithm algorithm = Algorithm.HMAC256("secret");
+			Algorithm algorithm = Algorithm.HMAC256(secret);
 			JWTVerifier verifier = JWT.require(algorithm).build();
 			DecodedJWT jwt = verifier.verify((String)token);
 			String userJSON = jwt.getClaims().get("user").asString();

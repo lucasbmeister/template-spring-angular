@@ -2,14 +2,19 @@ package com.totvs.template.Controllers.Security;
 
 import java.io.UnsupportedEncodingException;
 import java.util.Map;
+import java.util.Optional;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.google.gson.GsonBuilder;
+import com.totvs.template.Annotations.ExcludeAnnotationStrategy;
 import com.totvs.template.Domain.Dto.Security.Users.UserDto;
 import com.totvs.template.Domain.Entities.Security.User;
 import com.totvs.template.Services.Security.UserService;
 import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.PropertySource;
@@ -28,8 +33,13 @@ import com.google.gson.Gson;
 
 @RestController
 @PropertySource("classpath:${configfile.path}/template.properties")
-@RequestMapping(value="${endpoint.api}", headers = "Accept=application/json")
+@RequestMapping(value="${endpoint.api}",
+                consumes = MediaType.APPLICATION_JSON_VALUE,
+                produces = MediaType.APPLICATION_JSON_VALUE)
 public class SecurityController {
+
+    @Value( "${token.secret}" )
+    private String secret;
 
     @Autowired
     private UserService usersService ;
@@ -48,17 +58,16 @@ public class SecurityController {
         String username = params.getUsername();
         String password = params.getPassword();
 
-
         User user = usersService.login(username, password);
         // GENERATE JWT TOKEN
         if (user != null) {
-            if(user.getRoles() != null) {
-                user.getRoles().forEach(role -> role.setUser(null));
-            }
-            Gson gson = new Gson();
+//            if(user.getRoles() != null) {
+//                user.getRoles().forEach(role -> role.set(null));
+//            }
+            Gson gson = new GsonBuilder().setExclusionStrategies(new ExcludeAnnotationStrategy()).create();
             Algorithm algorithm;
             try {
-                algorithm = Algorithm.HMAC256("secret");
+                algorithm = Algorithm.HMAC256(secret);
                 String token = JWT.create()
                         .withClaim("user", gson.toJson(user))
                         .sign(algorithm);
@@ -100,16 +109,21 @@ public class SecurityController {
         // Get user from token decode
         try {
             //decode token
-            Algorithm algorithm = Algorithm.HMAC256("secret");
+            Algorithm algorithm = Algorithm.HMAC256(secret);
             JWTVerifier verifier = JWT.require(algorithm).build();
             DecodedJWT jwt = verifier.verify(token);
             String userJSON = jwt.getClaims().get("user").asString();
 
             // Set user in Authentication Service
-            Gson gson = new Gson();
-            User user = gson.fromJson(userJSON, User.class);
-            user.setPassword(null);
-            return convertToDto(user);
+            Gson gson = new GsonBuilder().setExclusionStrategies(new ExcludeAnnotationStrategy()).create();
+            Long userId = gson.fromJson(userJSON, User.class).getId();
+            Optional<User> verifiedUser = this.usersService.findOne(userId);
+
+            if(verifiedUser.isPresent()) {
+                User user = verifiedUser.get();
+                user.setPassword(null);
+                return convertToDto(user);
+            }
 
         } catch (IllegalArgumentException | UnsupportedEncodingException e) {
             response.setStatus(401);
@@ -124,7 +138,6 @@ public class SecurityController {
      * @param request
      * @param response
      * @param params
-     * @param Id
      */
     @Secured({"ROLE_PRIVATE_USER" })
     @RequestMapping(value = "/changePassword", method = RequestMethod.POST, headers = "Accept=application/json")
@@ -141,10 +154,17 @@ public class SecurityController {
             response.setStatus(500);
             return false;
         }
-        User userLogged = usersService.getOne(user.getId());
-        userLogged.setPassword(passwordNew);
-        usersService.insert(userLogged);
-        return true;
+        Optional<User> userLogged = usersService.findOne(user.getId());
+
+        if(userLogged.isPresent()) {
+            User updatedUser = userLogged.get();
+            updatedUser.setPassword(passwordNew);
+            usersService.insert(updatedUser);
+            return true;
+        } else {
+            response.setStatus(404);
+            return false;
+        }
     }
 
     private UserDto convertToDto(User user) {

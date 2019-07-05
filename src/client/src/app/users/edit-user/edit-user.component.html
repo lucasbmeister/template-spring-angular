@@ -1,0 +1,17 @@
+<thf-page-edit t-title="Editar Usuário">
+	<form #formEditUser="ngForm">
+
+		<div class="thf-row" *ngIf="!loading">
+			<thf-info class="thf-md-4" t-label="ID de usuário" [t-value]="user.id">
+			</thf-info>
+
+			<thf-email class="thf-md-4" name="email" [(ngModel)]="user.mail" t-clean t-label="Email" t-required>
+			</thf-email>
+
+			<thf-input class="thf-md-4" name="userame" [(ngModel)]="user.username" t-clean t-label="Nome de usuário"
+				t-required>
+			</thf-input>
+		</div>
+
+	</form>
+</thf-page-edit>

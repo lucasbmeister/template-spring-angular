@@ -1,13 +1,16 @@
 package com.totvs.template.Domain.Entities.Security;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.totvs.template.Annotations.Exclude;
 import com.totvs.template.Domain.Entities.Base.EntityBase;
 import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
-import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 
@@ -24,9 +27,20 @@ public class User extends EntityBase {
     private String password;
 	@Getter @Setter
     private String token;
-	@OneToMany(mappedBy="user", fetch = FetchType.LAZY)
+
+	@ManyToMany(fetch = FetchType.LAZY,
+			cascade = {
+					CascadeType.PERSIST,
+					CascadeType.MERGE
+			})
+	@JoinTable(name = "user_roles",
+			joinColumns = @JoinColumn(name = "user_id"),
+			inverseJoinColumns = @JoinColumn(name = "role_id")
+	)
+
 	@Getter @Setter
-    private List<Role> roles = new ArrayList<>();;
+    private Set<Role> roles = new HashSet<>();
+
 	@Getter @Setter
     private String mail;
 	@Getter @Setter

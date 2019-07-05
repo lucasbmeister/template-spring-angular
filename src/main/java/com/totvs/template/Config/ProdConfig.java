@@ -1,5 +1,6 @@
 package com.totvs.template.Config;
 
+import org.modelmapper.convention.NamingConventions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.modelmapper.ModelMapper;
@@ -17,7 +18,11 @@ public class ProdConfig {
 
     @Bean
 	public ModelMapper modelMapper() {
-	    return new ModelMapper();
+		ModelMapper modelMapper = new ModelMapper();
+		modelMapper.getConfiguration()
+				.setFieldMatchingEnabled(true)
+				.setFieldAccessLevel(org.modelmapper.config.Configuration.AccessLevel.PRIVATE)
+				.setSourceNamingConvention(NamingConventions.JAVABEANS_MUTATOR);
+		return modelMapper;
 	}
-
 }

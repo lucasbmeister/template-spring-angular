@@ -5,21 +5,26 @@ import com.totvs.tjf.api.context.v1.request.ApiPageRequest;
 import com.totvs.tjf.api.context.v1.request.ApiSortRequest;
 import com.totvs.tjf.api.context.v1.response.ApiCollectionResponse;
 
+import java.util.Collection;
 import java.util.Optional;
 
 public interface IBaseCrudService<TEntity> {
 
-    TEntity Insert(TEntity entity);
+    TEntity insert(TEntity entity);
 
-    TEntity Update(TEntity entity);
+    TEntity update(TEntity entity);
 
-    void Delete(Long Id);
+    void delete(Long Id);
 
-    void Delete(TEntity entity);
+    void delete(TEntity entity);
 
-    Optional<TEntity> FindOne(Long Id);
+    Optional<TEntity> findOne(Long Id);
 
-    ApiCollectionResponse<TEntity> findAllProjected(ApiFieldRequest field, ApiPageRequest page, ApiSortRequest sort);
+    ApiCollectionResponse<TEntity> findAllProjected(ApiPageRequest page, ApiSortRequest sort, ApiFieldRequest field);
+
+//    Collection<TEntity> findAll(ApiPageRequest page, ApiSortRequest sort);
+
+    boolean hasMorePages(ApiPageRequest page);
 
 
 

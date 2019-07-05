@@ -10,12 +10,12 @@ public class AuthUser implements UserDetails{
 	private static final long serialVersionUID = 2061709915172252885L;
 	private long userId;
 	private String username;
-	private Collection<? extends GrantedAuthority> ruoli;
+	private Collection<? extends GrantedAuthority> roles;
 	
-	public AuthUser (long userId, String username, Collection<? extends GrantedAuthority> ruoli) {
+	public AuthUser (long userId, String username, Collection<? extends GrantedAuthority> roles) {
 		this.userId = userId;
 		this.username = username;
-		this.ruoli = ruoli;
+		this.roles = roles;
 	}
 	
 
@@ -52,7 +52,7 @@ public class AuthUser implements UserDetails{
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {
 		// TODO Auto-generated method stub
-		return this.ruoli;
+		return this.roles;
 	}
 
 
