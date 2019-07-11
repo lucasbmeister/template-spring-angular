@@ -15,6 +15,8 @@ import org.springframework.web.bind.annotation.*;
 import java.lang.reflect.Type;
 import java.util.Collection;
 import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 
 public class BaseCrudController<TEntity extends EntityBase,
                             TCreateDto extends EntityBaseDto,
@@ -31,12 +33,12 @@ public class BaseCrudController<TEntity extends EntityBase,
     @Override
     @GetMapping
     public ApiCollectionResponse<TListDto> getAll( ApiFieldRequest field, ApiPageRequest page, ApiSortRequest sort) {
-        ApiCollectionResponse<TEntity> listProjected = this._service.findAllProjected(page, sort, field);;
+        CompletableFuture<ApiCollectionResponse<TEntity>> listProjected = this._service.findAllProjected(page, sort, field);
 
         try {
             Type collectionDtoType = new TypeToken<Collection<TListDto>>(getClass()) {}.getType();
-            Collection<TListDto> collectionDto = this._modelMapper.map(listProjected.getItems(), collectionDtoType);
-            ApiCollectionResponse<TListDto> responseList = ApiCollectionResponse.of(collectionDto, this._service.hasMorePages(page));
+            Collection<TListDto> collectionDto = this._modelMapper.map(listProjected.get().getItems(), collectionDtoType);
+            ApiCollectionResponse<TListDto> responseList = ApiCollectionResponse.of(collectionDto, this._service.hasMorePages(page).get());
             return responseList;
         }
         catch (Exception e)
@@ -49,14 +51,23 @@ public class BaseCrudController<TEntity extends EntityBase,
 
     @Override
     @GetMapping({"/{id}"})
-    public TEntity get(@PathVariable(value = "id") Long id) {
-        Optional<TEntity> entity = this._service.findOne(id);
-        if(entity.isPresent()) {
-            return entity.get();
+    public TEntity get(@PathVariable(value = "id") Long id){
+
+        try {
+            CompletableFuture<Optional<TEntity>> entity = this._service.findOne(id);
+            Optional<TEntity> entityOptional = entity.get();
+
+            if (entityOptional.isPresent()) {
+                return entityOptional.get();
+            } else {
+                throw new EntityNotFoundException("Não Encontrado");
+            }
         }
-        else {
-            throw new EntityNotFoundException("Não Encontrado");
+        catch (Exception e)
+        {
+            e.printStackTrace();
         }
+        return null;
     }
 
     @Override
@@ -64,7 +75,7 @@ public class BaseCrudController<TEntity extends EntityBase,
     public TEntity create(@RequestBody TCreateDto request) {
         try {
             Type entityType = new TypeToken<TEntity>(getClass()) {}.getType();
-            return this._service.insert(this._modelMapper.map(request, entityType));
+            return this._service.insert(this._modelMapper.map(request, entityType)).get();
         }
         catch (Exception e)
         {
@@ -76,7 +87,15 @@ public class BaseCrudController<TEntity extends EntityBase,
     @Override
     @PutMapping
     public TEntity update(@RequestBody TEntity request) {
-        return this._service.update(request);
+        try
+        {
+            return this._service.update(request).get();
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     @Override

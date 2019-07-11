@@ -33,29 +33,56 @@ export class EqualValidator implements Validator {
 		// second control
 		const control2 = control.root.get(this.validateEqual);
 
-		if(control.errors && !control.errors.validateEqual){
+		if (control2 && control2.value === null)
+			control2.setValue("");
+
+		if (control.errors && !control.errors.validateEqual && (control2.value === null || control2.value === "")) {
+			if(control.value == control2.value){
+				this.deleteValidateError(control2);
+			}
 			return;
 		}
+		// value equal
+		if (control2 && value === control2.value && !this.isReverse) {
+			if (control2.errors) {
+				this.deleteValidateError(control2)
+			}
+			if (control.errors) {
+				this.deleteValidateError(control)
+			}
+			return null;
+		}
+
 		// value not equal
 		if (control2 && value !== control2.value && !this.isReverse) {
 			return {
-				validateEqual:  {value : false} 
+				validateEqual: { value: false }
 			};
 		}
 
 		// value equal and reverse
 		if (control2 && value === control2.value && this.isReverse) {
-			delete control2.errors['validateEqual'];
-			if (!Object.keys(control2.errors).length) {
-				control2.setErrors(null);
+			if (control2.errors) {
+				this.deleteValidateError(control2)
 			}
+			if (control.errors) {
+				this.deleteValidateError(control)
+			}
+			return null
 		}
 
 		// value not equal and reverse
 		if (control2 && value !== control2.value && this.isReverse) {
-			control2.setErrors({ validateEqual: {value : false} });
+			control2.setErrors({ validateEqual: { value: false } });
 		}
 
 		return null;
+	}
+
+	deleteValidateError(control: AbstractControl) {
+		delete control.errors['validateEqual'];
+		if (!Object.keys(control.errors).length) {
+			control.setErrors(null);
+		}
 	}
 }

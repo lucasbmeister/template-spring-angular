@@ -1,5 +1,6 @@
 package com.totvs.template.Services.Security;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.totvs.template.Domain.Entities.Security.Role;
@@ -15,17 +16,22 @@ public class RolesService extends BaseCrudService<Role> {
 	@Autowired
     IRoleRepository rolesRepository;
 
-//    public Role findByRoleAndUser(String role, User user) {
-//    	return rolesRepository.findByRoleAndUser(role, user);
-//    }
-//
-//    public List<Role> findByUser(User user) {
-//		return rolesRepository.findByUser(user);
-//	}
+	public void bootstrap() {
+	    this.insert(new Role("ADMIN"));
+	    this.insert(new Role("PRIVATE_USER"));
+    }
+
+    public Role findByRole(String role){
+		return this.rolesRepository.findByRole(role);
+	}
 
 //    public void delete(Long role) {
 //    	Role roleToDelete = rolesRepository.getOne(role);
 //	    rolesRepository.delete(roleToDelete);
+//    }
+
+//    public Role findByRoleAndUser(String role, User user) {
+//    	return rolesRepository.findByRoleAndUser(role, user);
 //    }
 
 //	public List<Role> getRoles(Long id_user) {

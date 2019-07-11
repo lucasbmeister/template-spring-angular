@@ -4,3 +4,7 @@
 	text-align: left;
 	color: crimson;
 }
+
+.no-label-padding {
+	padding-top: 24pt;
+}

@@ -44,8 +44,8 @@ export class UserService {
 		return this.http.delete<boolean>(`${this.api}/${id}`);
 	}
 
-	public updateUser(id : string | number) {
-
+	public updateUser(user : UserDto) : Observable<UserDto> {
+		return this.http.put<UserDto>(`${this.api}`, user)
 	}
 
 	public createUser(user : UserDto) : Observable<UserDto> {

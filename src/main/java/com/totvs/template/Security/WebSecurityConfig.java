@@ -3,6 +3,7 @@ package com.totvs.template.Security;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -16,7 +17,7 @@ import org.springframework.web.filter.CorsFilter;
 
 @Configuration
 @EnableWebSecurity
-@EnableGlobalMethodSecurity(securedEnabled = true, prePostEnabled = true)
+@EnableGlobalMethodSecurity(prePostEnabled = true)
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter  {
 
     @Autowired
@@ -33,10 +34,11 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter  {
 	    UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
 	    CorsConfiguration config = new CorsConfiguration();
 	    config.setAllowCredentials(true); 
-	    config.addAllowedOrigin("*");
+	    config.addAllowedOrigin("http://localhost:4200");
 	    config.addAllowedHeader("*");
 	    config.addAllowedMethod("GET");
 	    config.addAllowedMethod("POST");
+		config.addAllowedMethod("PUT");
 	    config.addAllowedMethod("DELETE");
 	    source.registerCorsConfiguration("/**", config);
 	    return new CorsFilter(source);
@@ -46,13 +48,17 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter  {
     protected void configure(HttpSecurity httpSecurity) throws Exception {
         httpSecurity
                 // we don't need CSRF because our token is invulnerable
-                .csrf().disable()
+                .csrf().disable();
 
+		httpSecurity
+				.authorizeRequests()
+				.antMatchers(HttpMethod.POST, "/api/v1/login").permitAll()
+				.anyRequest().authenticated();
+
+        httpSecurity
                 .exceptionHandling().authenticationEntryPoint(unauthorizedHandler).and()
-
                 // don't create session
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
-
 
         // Custom JWT based security filter
         httpSecurity

@@ -15,4 +15,5 @@ import java.util.List;
 @NoRepositoryBean
 public interface IBaseRepository<TEntity extends IEntityBase> extends JpaRepository<TEntity, Long>, ApiJpaRepository<TEntity> {
     //Collection<TEntity> findAll(ApiPageRequest page, ApiSortRequest sort, ApiFieldRequest field);
+    
 }

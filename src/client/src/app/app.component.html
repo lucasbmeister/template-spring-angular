@@ -1,7 +1,10 @@
 <div class="thf-wrapper">
-  <thf-toolbar t-title="client"></thf-toolbar>
+  <thf-toolbar t-title="client"
+	[t-profile]="profile"
+    [t-profile-actions]="profileActions"
+  ></thf-toolbar>
 
-  <thf-menu [t-menus]="menus"></thf-menu>
+  <thf-menu [t-menus]="filteredMenu"></thf-menu>
 
   <router-outlet></router-outlet>
 </div>

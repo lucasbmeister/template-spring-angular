@@ -6,6 +6,8 @@ import com.totvs.tjf.api.context.v1.request.ApiPageRequest;
 import com.totvs.tjf.api.context.v1.request.ApiSortRequest;
 import com.totvs.tjf.api.context.v1.response.ApiCollectionResponse;
 
+import java.util.concurrent.ExecutionException;
+
 public interface IBaseCrudController<TEntity, TCreateDto, TListDto, TEntityDto> {
 
     ApiCollectionResponse<TListDto> getAll(ApiFieldRequest field, ApiPageRequest page, ApiSortRequest sort);

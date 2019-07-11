@@ -3,6 +3,8 @@ package com.totvs.template.Controllers.Security;
 import java.io.UnsupportedEncodingException;
 import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -117,15 +119,16 @@ public class SecurityController {
             // Set user in Authentication Service
             Gson gson = new GsonBuilder().setExclusionStrategies(new ExcludeAnnotationStrategy()).create();
             Long userId = gson.fromJson(userJSON, User.class).getId();
-            Optional<User> verifiedUser = this.usersService.findOne(userId);
+            CompletableFuture<Optional<User>> verifiedUser = this.usersService.findOne(userId);
+            Optional<User> optionalUser = verifiedUser.get();
 
-            if(verifiedUser.isPresent()) {
-                User user = verifiedUser.get();
+            if(optionalUser.isPresent()) {
+                User user = optionalUser.get();
                 user.setPassword(null);
                 return convertToDto(user);
             }
 
-        } catch (IllegalArgumentException | UnsupportedEncodingException e) {
+        } catch (InterruptedException | ExecutionException |IllegalArgumentException | UnsupportedEncodingException e) {
             response.setStatus(401);
             e.printStackTrace();
         }
@@ -154,15 +157,24 @@ public class SecurityController {
             response.setStatus(500);
             return false;
         }
-        Optional<User> userLogged = usersService.findOne(user.getId());
 
-        if(userLogged.isPresent()) {
-            User updatedUser = userLogged.get();
-            updatedUser.setPassword(passwordNew);
-            usersService.insert(updatedUser);
-            return true;
-        } else {
-            response.setStatus(404);
+        try {
+            CompletableFuture<Optional<User>> userLogged = usersService.findOne(user.getId());
+            Optional<User> optionalUser = userLogged.get();
+
+            if (optionalUser.isPresent()) {
+                User updatedUser = optionalUser.get();
+                updatedUser.setPassword(passwordNew);
+                usersService.insert(updatedUser);
+                return true;
+            } else {
+                response.setStatus(404);
+                return false;
+            }
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
             return false;
         }
     }

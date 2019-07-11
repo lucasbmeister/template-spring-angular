@@ -22,10 +22,11 @@ import org.springframework.web.bind.annotation.RestController;
 import java.lang.reflect.Type;
 import java.util.Collection;
 import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
 
 @RestController
 @ApiGuideline(ApiGuideline.ApiGuidelineVersion.v1)
-//@PreAuthorize("hasRole('ROLE_ADMIN')")
+@PreAuthorize("hasRole('ROLE_ADMIN')")
 @RequestMapping(path = "${endpoint.api}/roles", produces = MediaType.APPLICATION_JSON_VALUE)
 public class RoleController {
 
@@ -37,12 +38,12 @@ public class RoleController {
 
     @GetMapping
     public ApiCollectionResponse<RoleDto> getAll(ApiPageRequest page, ApiSortRequest sort, ApiFieldRequest field) {
-        ApiCollectionResponse<Role> listProjected = this._rolesService.findAllProjected(page, sort, field);
+        CompletableFuture<ApiCollectionResponse<Role>> listProjected = this._rolesService.findAllProjected(page, sort, field);
 
         try {
             Type collectionDtoType = new TypeToken<Collection<RoleDto>>(getClass()) {}.getType();
-            Collection<RoleDto> collectionDto = this._modelMapper.map(listProjected.getItems(), collectionDtoType);
-            ApiCollectionResponse<RoleDto> responseList = ApiCollectionResponse.of(collectionDto, this._rolesService.hasMorePages(page));
+            Collection<RoleDto> collectionDto = this._modelMapper.map(listProjected.get().getItems(), collectionDtoType);
+            ApiCollectionResponse<RoleDto> responseList = ApiCollectionResponse.of(collectionDto, this._rolesService.hasMorePages(page).get());
             return responseList;
         }
         catch (Exception e)
@@ -54,12 +55,20 @@ public class RoleController {
 
     @GetMapping({"/{id}"})
     public Role get(@PathVariable(value = "id") Long id) {
-        Optional<Role> entity = this._rolesService.findOne(id);
-        if(entity.isPresent()) {
-            return entity.get();
+
+        try {
+            CompletableFuture<Optional<Role>> entity = this._rolesService.findOne(id);
+            Optional<Role> roleOptional = entity.get();
+            if (roleOptional.isPresent()) {
+                return roleOptional.get();
+            } else {
+                throw new EntityNotFoundException("Não Encontrado");
+            }
         }
-        else {
-            throw new EntityNotFoundException("Não Encontrado");
+        catch (Exception e)
+        {
+            e.printStackTrace();
         }
+        return null;
     }
 }

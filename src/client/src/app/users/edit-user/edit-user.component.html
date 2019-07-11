@@ -1,17 +1,60 @@
-<thf-page-edit t-title="Editar Usuário">
+<thf-page-edit t-title="Editar Usuário" [t-disable-submit]="formEditUser.invalid">
 	<form #formEditUser="ngForm">
+		<thf-tabs>
+			<thf-tab t-active t-label="Geral">
+				<div class="thf-row">
 
-		<div class="thf-row" *ngIf="!loading">
-			<thf-info class="thf-md-4" t-label="ID de usuário" [t-value]="user.id">
-			</thf-info>
+					<thf-email class="thf-md-4" name="email" [(ngModel)]="user.mail" t-clean t-label="Email" t-required>
+					</thf-email>
 
-			<thf-email class="thf-md-4" name="email" [(ngModel)]="user.mail" t-clean t-label="Email" t-required>
-			</thf-email>
+					<thf-input class="thf-md-4" name="username" [(ngModel)]="user.username" t-clean t-label="Usuário"
+						t-required>
+					</thf-input>
 
-			<thf-input class="thf-md-4" name="userame" [(ngModel)]="user.username" t-clean t-label="Nome de usuário"
-				t-required>
-			</thf-input>
-		</div>
+					<thf-input class="thf-md-4" name="name" [(ngModel)]="user.name" t-clean t-label="Nome" t-required>
+					</thf-input>
 
+					<thf-input class="thf-md-4" name="surname" [(ngModel)]="user.surname" t-clean t-label="Sobrenome"
+						t-required>
+					</thf-input>
+				</div>
+				<div class="thf-row">
+					<div class="thf-md-4">
+						<thf-password #password="ngModel" validateEqual="confirmPassword" reverse="true" name="password"
+							[(ngModel)]="user.password" t-label="Senha (deixe em branco para manter)" t-maxlength="14" t-minlength="9" t-clean>
+						</thf-password>
+						<div *ngIf="password.errors" class="invalid-feedback">
+							<div *ngIf="password.errors.minlength">Senha deve possuir no minímo 9 caracteres</div>
+						</div>
+					</div>
+					<div class="thf-md-4">
+						<thf-password #confirmPassword="ngModel" ngModel validateEqual="password" reverse="false"
+							name="confirmPassword" t-label="Confirmar Senha (deixe em branco para manter)" t-maxlength="14" t-clean>
+						</thf-password>
+						<div *ngIf="confirmPassword.errors" class="invalid-feedback">
+							<div *ngIf="confirmPassword.errors.validateEqual">Senhas
+								não coincidem</div>
+						</div>
+					</div>
+				</div>
+			</thf-tab>
+			<thf-tab t-label="Permissões">
+				<div class="thf-row">
+					<thf-combo [(ngModel)]="currentRoleId" class="thf-md-4" name="roles" t-label="Permissões"
+						[t-filter-params]="role" [t-filter-service]="roleService" t-required="false">
+					</thf-combo>
+					<thf-button class="thf-md-2 no-label-padding" t-label="Adicionar" t-type="default"
+						(t-click)="addRoleToTable()">
+					</thf-button>
+				</div>
+				<div class="thf-row">
+					<div class="thf-md-12">
+						<thf-table t-sort="true" [t-actions]="roleActions" t-striped="true" [t-columns]="roleColumns"
+							[t-items]="user.roles">
+						</thf-table>
+					</div>
+				</div>
+			</thf-tab>
+		</thf-tabs>
 	</form>
 </thf-page-edit>

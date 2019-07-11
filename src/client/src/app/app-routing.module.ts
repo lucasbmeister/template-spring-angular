@@ -9,7 +9,7 @@ const routes: Routes = [
 		path : "",
 		component : AppComponent,
 		children : [
-			{ path: 'home', component : HomeComponent },
+			{ path: 'home', component : HomeComponent, canActivate : [AuthGuard]},
 			{ 
 				path: 'users', 
 				loadChildren : "./users/users.module#UsersModule", 

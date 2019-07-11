@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.totvs.template.Annotations.Exclude;
 import com.totvs.template.Domain.Entities.Base.EntityBase;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
@@ -16,7 +17,16 @@ import java.util.stream.Collectors;
 
 @Entity
 @Table(name = "app_user")
+@NoArgsConstructor
 public class User extends EntityBase {
+
+	public User(User user){
+		setUsername(user.getUsername());
+		setName(user.getName());
+		setRoles(user.getRoles());
+		setMail(user.getMail());
+		setSurname(user.getSurname());
+	}
 
 	// Attributes
 	@NotNull
@@ -28,10 +38,10 @@ public class User extends EntityBase {
 	@Getter @Setter
     private String token;
 
-	@ManyToMany(fetch = FetchType.LAZY,
+	@ManyToMany(fetch = FetchType.EAGER,
 			cascade = {
-					CascadeType.PERSIST,
 					CascadeType.MERGE
+					//CascadeType.PERSIST
 			})
 	@JoinTable(name = "user_roles",
 			joinColumns = @JoinColumn(name = "user_id"),

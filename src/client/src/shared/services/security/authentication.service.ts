@@ -34,7 +34,7 @@ export class AuthenticationService {
                     // Verify token and get user
                     this.securityService.verifyToken(token).subscribe(
                         usr => {
-                            if (!usr || (!usr.id && !usr.success)) {
+                            if (!usr) {
                                 ob.next(undefined);
                             } else {
                                 ob.next(usr);
@@ -48,7 +48,6 @@ export class AuthenticationService {
             });
         });
     }
-
     /**
      * Logout function
      */

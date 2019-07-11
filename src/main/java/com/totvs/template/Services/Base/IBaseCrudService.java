@@ -7,24 +7,25 @@ import com.totvs.tjf.api.context.v1.response.ApiCollectionResponse;
 
 import java.util.Collection;
 import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
 
 public interface IBaseCrudService<TEntity> {
 
-    TEntity insert(TEntity entity);
+    CompletableFuture<TEntity> insert(TEntity entity);
 
-    TEntity update(TEntity entity);
+    CompletableFuture<TEntity> update(TEntity entity);
 
     void delete(Long Id);
 
     void delete(TEntity entity);
 
-    Optional<TEntity> findOne(Long Id);
+    CompletableFuture<Optional<TEntity>> findOne(Long Id);
 
-    ApiCollectionResponse<TEntity> findAllProjected(ApiPageRequest page, ApiSortRequest sort, ApiFieldRequest field);
+    CompletableFuture<ApiCollectionResponse<TEntity>> findAllProjected(ApiPageRequest page, ApiSortRequest sort, ApiFieldRequest field);
 
 //    Collection<TEntity> findAll(ApiPageRequest page, ApiSortRequest sort);
 
-    boolean hasMorePages(ApiPageRequest page);
+    CompletableFuture<Boolean> hasMorePages(ApiPageRequest page);
 
 
 

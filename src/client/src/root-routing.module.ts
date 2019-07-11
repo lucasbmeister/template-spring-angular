@@ -15,8 +15,7 @@ const routes: Routes = [
     {
         path: 'app',
         loadChildren: './app/app.module#AppModule',
-		canActivate : [AuthGuard],
-		data : {permissions : ["ADMIN"]}
+		canActivate : [AuthGuard]	
     },
 	{
 		path : "**",

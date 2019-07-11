@@ -16,8 +16,9 @@ import java.util.Set;
 @Getter @Setter
 public class Role extends EntityBase {
 
+	@Exclude
+	@JsonIgnore
 	@ManyToMany(mappedBy = "roles")
-	@Exclude @JsonIgnore
 	private Set<User> users = new HashSet<>();
 
 	private String role;

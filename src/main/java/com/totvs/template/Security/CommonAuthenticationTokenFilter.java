@@ -9,6 +9,11 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.totvs.template.Annotations.ExcludeAnnotationStrategy;
+import com.totvs.template.Domain.Entities.Security.Role;
+import com.totvs.template.Domain.Entities.Security.User;
 import com.totvs.template.Services.Security.SecurityService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -61,12 +66,17 @@ public class CommonAuthenticationTokenFilter extends OncePerRequestFilter {
     	long userId = root.get("id").asLong();
     	String username = root.get("username").asText();
 
-    	
+		Gson gson = new GsonBuilder().setExclusionStrategies(new ExcludeAnnotationStrategy()).create();
+
     	List<SimpleGrantedAuthority> authorities = new ArrayList<>();
     	authorities.add(new SimpleGrantedAuthority("ROLE_PRIVATE_USER"));
+
     	if(root.get("roles") != null) {
         	for(JsonNode role : root.get("roles")) {
-        		authorities.add(new SimpleGrantedAuthority("ROLE_" + role.asText()));    		
+
+				Role roleEntity = gson.fromJson(role.toString(), Role.class);
+
+        		authorities.add(new SimpleGrantedAuthority("ROLE_" + roleEntity.getRole()));
         	}
     	}
     	

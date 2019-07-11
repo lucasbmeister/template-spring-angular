@@ -42,7 +42,7 @@ export class UserDto {
 	}
 
 	static of(json: any = {}) {
-		return UserDto.init(json);
+		return this.init(json);
 	}
 
 	isAdmin(): boolean {
@@ -59,6 +59,8 @@ export class UserDto {
 
 		if (typeof role === 'string') {
 			return (this.roles.find(r => r.role === role) !== undefined);
+		} else if(typeof role === 'undefined') {
+			return true;
 		} else {
 			const found = role.filter(rol => {
 				return (this.roles.find(r => r.role == rol) !== undefined);
